@@ -1,0 +1,6 @@
+name: PVPPlugin
+version: ${project.version}
+main: me.chaz.pvpplugin.PVPPlugin
+api-version: 1.16
+authors: [Chaz]
+description: Players can use a command to disable PVP
