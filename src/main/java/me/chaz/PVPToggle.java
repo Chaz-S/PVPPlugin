@@ -107,7 +107,8 @@ public class PVPToggle implements CommandExecutor
             UUID attackedPlyr = eventInfo.getEntity().getUniqueId();
 
             if(playerRegister.contains("players." + attackedPlyr.toString() + ".active"))
-                eventInfo.setCancelled(true);
+                if((boolean)playerRegister.get("players." + attackedPlyr.toString() + ".active"))
+                    eventInfo.setCancelled(true);
         }
     }
 }
