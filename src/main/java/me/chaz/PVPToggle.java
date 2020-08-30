@@ -3,11 +3,10 @@ package me.chaz;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,11 +86,19 @@ public class PVPToggle implements CommandExecutor
                 }
             }
         }
+
+        return true;
     }
 
     @EventHandler
-    public void onHit(EntityDamageEvent ede)
+    public void onHit(EntityDamageByEntityEvent eventInfo)
     {
+        if(eventInfo.getDamager() instanceof Player && eventInfo.getEntity() instanceof Player)
+        {
+            UUID attackedPlyr = eventInfo.getEntity().getUniqueId();
 
+            if(playerRegister.contains("players." + attackedPlyr.toString() + ".active"))
+                eventInfo.setCancelled(true);
+        }
     }
 }
