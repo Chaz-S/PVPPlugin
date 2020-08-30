@@ -18,12 +18,13 @@ public class PVPToggle implements CommandExecutor
 {
     private final Main plugin;
 
-    private FileConfiguration playerRegister;
+    private YamlConfiguration playerRegister;
     private File playerRegFile = new File("PlayerRegister.yml");
     private int cooldown;
 
     public PVPToggle(Main plugin)
     {
+        //
         this.plugin = plugin;
         plugin.getCommand("pvptoggle").setExecutor(this);
 
@@ -39,10 +40,25 @@ public class PVPToggle implements CommandExecutor
 
         playerRegister = YamlConfiguration.loadConfiguration(playerRegFile);
 
-        if(playerRegister.get("cooldown in seconds") == null)
-            playerRegister.set("cooldown in seconds", 900);
+//        if(!playerRegister.isConfigurationSection("general_config"))
+//            playerRegister.createSection("general_config");
 
-        cooldown = (int) playerRegister.get("cooldown in seconds");
+        if(!playerRegister.isSet("general_config.cooldown_in_seconds"))
+            playerRegister.set("general_config.cooldown_in_seconds", 900);
+
+        cooldown = (int) playerRegister.get("general_config.cooldown_in_seconds");
+
+//        if(!playerRegister.isConfigurationSection("players"))
+//            playerRegister.createSection("players");
+
+        try
+        {
+            playerRegister.save(playerRegFile);
+        }
+        catch(IOException e)
+        {
+            System.err.println(e);
+        }
     }
 
     @Override
@@ -54,15 +70,20 @@ public class PVPToggle implements CommandExecutor
                 Player player = (Player) sender;
                 UUID uuid = player.getUniqueId();
 
-                LocalDateTime time = (LocalDateTime) playerRegister.get(uuid.toString());
+                LocalDateTime time = (LocalDateTime) playerRegister.get("players." + uuid.toString());
 
-                if(time != null)
+                if(time == null || !(boolean) playerRegister.get("players." + uuid.toString() + ".active"))
                 {
-                    playerRegister.set(uuid.toString(), LocalDateTime.now());
+                    playerRegister.set("players." + uuid.toString() + ".time", LocalDateTime.now());
+                    playerRegister.set("players." + uuid.toString() + ".active", true);
                 }
                 else
                 {
-
+                    if(time.isAfter(LocalDateTime.now().minusSeconds(cooldown)))
+                    {
+                        playerRegister.set("players." + uuid.toString() + ".time", null);
+                        playerRegister.set("players." + uuid.toString() + ".active", false);
+                    }
                 }
             }
         }
