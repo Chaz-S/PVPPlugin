@@ -56,7 +56,7 @@ public class PVPToggle implements CommandExecutor
         }
         catch(IOException e)
         {
-            System.err.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
@@ -82,6 +82,15 @@ public class PVPToggle implements CommandExecutor
                     {
                         playerRegister.set("players." + uuid.toString() + ".time", null);
                         playerRegister.set("players." + uuid.toString() + ".active", false);
+
+                        try
+                        {
+                            playerRegister.save(playerRegFile);
+                        }
+                        catch(IOException e)
+                        {
+                            System.err.println(e.getMessage());
+                        }
                     }
                 }
             }
