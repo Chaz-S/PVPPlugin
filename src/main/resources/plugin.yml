@@ -1,6 +1,10 @@
 name: PVPPlugin
 version: ${project.version}
-main: me.chaz.pvpplugin.PVPPlugin
+main: me.chaz.Main
 api-version: 1.16
 authors: [Chaz]
 description: Players can use a command to disable PVP
+commands:
+  pvptoggle:
+    usage: /pvptoggle
+    description: Toggle pvp on or off.
